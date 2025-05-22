@@ -10,9 +10,13 @@ interface Todo {
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchTodos() {
+      setIsLoading(true);
+      setError(null);
       try {
         const res = await fetch("/api/todos");
         if (!res.ok) {
@@ -22,6 +26,9 @@ export default function Home() {
         setTodos(data);
       } catch (error) {
         console.error("Failed to fetch todos:", error);
+        setError("Failed to load todos. Please try again");
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchTodos();
@@ -29,13 +36,25 @@ export default function Home() {
 
   const addTodo = async () => {
     if(!newTodo) return;
-    await fetch("/api/todos", {
-      method: "POST",
-      body: JSON.stringify({ title: newTodo }),
-      headers: { "Content-Type": "application/json" },
-    });
-    setNewTodo("");
-    location.reload();
+
+    try {
+      const res = await fetch("/api/todos", {
+        method: "POST",
+        body: JSON.stringify({ title: newTodo }),
+        headers: { "Content-Type": "application/json" },
+      });
+      
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status}`);
+      }
+
+      const todosRes = await fetch("/api/todos");
+      const todosData = await todosRes.json();
+      setTodos(todosData);
+      setNewTodo("");
+    } catch (error) {
+      console.error("Failed to add todo:", error);
+    }
   };
 
   const toggleTodo = async (id: number, completed: boolean) => {
@@ -79,6 +98,11 @@ export default function Home() {
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
       <h1 className="text-2xl font-bold text-center text-gray-800">TODO App!</h1>
+      {error && (
+        <div className="mt-4 p-2 bg-red-100 text-red-700 rounded">
+          {error}
+        </div>
+      )}
       <div className="flex mt-4">
         <input
           type="text"
@@ -91,29 +115,45 @@ export default function Home() {
           Add
         </button>
       </div>
-      <ul className="mt-4">
-        {todos.map((todo) => (
-          <li
-            key={todo.id}
-            className="flex justify-between items-center p-2 border-b"
-          >
-            <span
-              className={`flex-1 cursor-pointer text-gray-500 ${
-                todo.completed ? "line-through" : ""
-              }`}
-              onClick={() => toggleTodo(todo.id, todo.completed)}
+      {isLoading ? (
+        <div className="mt-4 text-center text-gray-500">Loading todos...</div>
+      ): (
+        <ul className="mt-4">
+          {todos.length === 0 && (
+            <li className="p-2 text-center text-gray-500">No todos. Add one above!</li>
+          )}
+          {todos.map((todo) => (
+            <li
+              key={todo.id}
+              className="flex justify-between items-center p-2 border-b"
             >
-              {todo.title}
-            </span>
-            <button
-              onClick={() => deleteTodo(todo.id)}
-              className="bg-red-500 text-white p-1 rounded"
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+              <span
+                className={`flex-1 cursor-pointer text-gray-500 ${
+                  todo.completed ? "line-through" : ""
+                }`}
+                onClick={() => toggleTodo(todo.id, todo.completed)}
+                role="checkbox"
+                aria-checked={todo.completed}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    toggleTodo(todo.id, todo.completed)
+                  }
+                }}
+              >
+                {todo.title}
+              </span>
+              <button
+                onClick={() => deleteTodo(todo.id)}
+                className="bg-red-500 text-white p-1 rounded"
+                aria-label={`Delete ${todo.title}`}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
