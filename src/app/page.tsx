@@ -7,6 +7,11 @@ interface Todo {
   completed: boolean;
 }
 
+/**
+ * Renders a client-side TODO application with full CRUD functionality.
+ *
+ * Displays a list of todos fetched from a REST API, allows users to add new todos, toggle completion status, and delete existing todos. Handles loading and error states, and provides accessible UI interactions.
+ */
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");

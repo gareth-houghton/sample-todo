@@ -3,6 +3,11 @@ import { todos } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+/**
+ * Retrieves all todo items from the database and returns them as a JSON response.
+ *
+ * @returns A JSON response containing the list of all todos, or an error message with a 500 status code if retrieval fails.
+ */
 export async function GET() {
   try {
     const allTodos = await db.select().from(todos)
@@ -13,6 +18,11 @@ export async function GET() {
   }
 }
 
+/**
+ * Handles HTTP POST requests to create a new todo item.
+ *
+ * Expects a JSON body with a non-empty "title" string. Returns a success message on successful creation, or an error message with appropriate status code if validation fails or an error occurs.
+ */
 export async function POST(req: Request) {
   try {
     const { title } = await req.json();
@@ -29,6 +39,11 @@ export async function POST(req: Request) {
   }
 }
 
+/**
+ * Updates the completion status of a specific todo item.
+ *
+ * Expects a JSON request body containing an {@link id} and a boolean {@link completed} status. Returns a success message if the update is successful, or an error message with an appropriate status code if validation fails, the todo does not exist, or an internal error occurs.
+ */
 export async function PUT(req: Request) {
   try {
     const { id, completed } = await req.json();
@@ -50,6 +65,11 @@ export async function PUT(req: Request) {
   }
 }
 
+/**
+ * Handles HTTP DELETE requests to remove a todo item by its ID.
+ *
+ * Expects a JSON request body containing an {@link id}. Returns a success message if the todo is deleted, or an error message with an appropriate status code if the ID is missing, the todo does not exist, or a server error occurs.
+ */
 export async function DELETE(req: Request) {
   try {
     const { id } = await req.json();

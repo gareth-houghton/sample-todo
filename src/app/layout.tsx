@@ -17,6 +17,13 @@ export const metadata: Metadata = {
   description: "For demo purposes and testing new things",
 };
 
+/**
+ * Root layout component that sets up global HTML structure and applies font styles.
+ *
+ * Wraps all page content with the configured fonts and base layout for the application.
+ *
+ * @param children - The content to be rendered within the layout.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
