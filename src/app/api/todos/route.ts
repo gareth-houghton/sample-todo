@@ -8,6 +8,7 @@ export async function GET() {
     const allTodos = await db.select().from(todos)
     return NextResponse.json(allTodos);
   } catch (error) {
+    console.log(error);
     return NextResponse.json({ error: "Failed to fetch todos" }, { status: 500 });
   }
 }
