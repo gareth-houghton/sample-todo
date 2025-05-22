@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/gareth-houghton/sample-todo?utm_source=oss&utm_medium=github&utm_campaign=gareth-houghton%2Fsample-todo&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
+This is a simple todo demo application which can be used to test out and investigate various different tools and technologies.
 
 ## Getting Started
 
-First, run the development server:
+To start, you'll need to spin up the backend using docker compose from the `/infra` directory:
+
+```bash
+docker compose up -d
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+:tada: That's it, you're up and running
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Finished work
 
-## Learn More
+When you're done running locally all you need to do is turn off the database:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+docker compose down
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+As the docker compose file uses a volume this will persist any data that you created as part of your work. If you wish to remove that volume you can do:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+docker compose down -v
+```
