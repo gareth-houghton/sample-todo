@@ -13,9 +13,16 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchTodos() {
-      const res = await fetch("/api/todos");
-      const data = await res.json();
-      setTodos(data);
+      try {
+        const res = await fetch("/api/todos");
+        if (!res.ok) {
+          throw new Error(`Error: ${res.status}`);
+        }
+        const data = await res.json();
+        setTodos(data);
+      } catch (error) {
+        console.error("Failed to fetch todos:", error);
+      }
     }
     fetchTodos();
   }, []);
@@ -32,21 +39,41 @@ export default function Home() {
   };
 
   const toggleTodo = async (id: number, completed: boolean) => {
-    await fetch("/api/todos", {
-      method: "PUT",
-      body: JSON.stringify({ id, completed: !completed }),
-      headers: { "Content-Type": "application/json" },
-    });
-    location.reload();
+    try {
+      const res = await fetch("/api/todos", {
+        method: "PUT",
+        body: JSON.stringify({ id, completed: !completed }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status}`);
+      }
+
+      setTodos(todos.map(todo => 
+        todo.id === id ? { ...todo, completed: !completed } : todo
+      ));
+    } catch (error) {
+      console.error("Failed to update todo:", error);
+    }
   };
 
   const deleteTodo = async (id: number) => {
-    await fetch("/api/todos", {
-      method: "DELETE",
-      body: JSON.stringify({ id }),
-      headers: { "Content-Type": "application/json" },
-    });
-    location.reload();
+    try {
+      const res = await fetch("/api/todos", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+        headers: { "Content-Type": "application/json" },
+      });
+      
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status}`);
+      }
+
+      setTodos(todos.filter(todo => todo.id !== id));
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+    }
   };
 
   return (
