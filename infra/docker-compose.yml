@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:17
+    restart: always
+    user: postgres
+    secrets:
+      - pg-password
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=tododb
+      - POSTGRES_PASSWORD_FILE=/run/secrets/pg-password
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg-data:
+
+secrets:
+  pg-password:
+    file: pg/pass.txt
+
+networks:
+  dbnet:
