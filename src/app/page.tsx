@@ -15,6 +15,11 @@ interface Todo {
   completed: boolean;
 }
 
+/**
+ * Renders the main Todo application interface, allowing users to view, add, complete, and delete tasks.
+ *
+ * Fetches todos from the server on mount, manages local state for todos, loading, and errors, and provides UI controls for CRUD operations. Displays loading and error states, and updates the UI in response to user actions and API responses.
+ */
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
