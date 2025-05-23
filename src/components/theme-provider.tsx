@@ -1,17 +1,15 @@
 "use client"
 
 import * as React from "react"
-import { useEffect } from "react"
+import { useEffect, useState, ReactNode, createContext, useContext } from "react"
 
 type Theme = "dark" | "light" | "system"
 
 type ThemeProviderProps = {
-  children: React.ReactNode
+  children: ReactNode
   defaultTheme?: Theme
   storageKey?: string
-  attribute?: string
   enableSystem?: boolean
-  disableTransitionOnChange?: boolean
 }
 
 type ThemeProviderState = {
@@ -24,18 +22,16 @@ const initialState: ThemeProviderState = {
   setTheme: () => null,
 }
 
-export const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState)
+export const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
 export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "ui-theme",
-  attribute = "data-theme",
   enableSystem = true,
-  disableTransitionOnChange = false,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>(
+  const [theme, setTheme] = useState<Theme>(
     () => (typeof window !== "undefined" ? 
       (localStorage.getItem(storageKey) as Theme) || defaultTheme : 
       defaultTheme)
@@ -73,7 +69,7 @@ export function ThemeProvider({
 }
 
 export const useTheme = () => {
-  const context = React.useContext(ThemeProviderContext)
+  const context = useContext(ThemeProviderContext)
 
   if (context === undefined)
     throw new Error("useTheme must be used within a ThemeProvider")
