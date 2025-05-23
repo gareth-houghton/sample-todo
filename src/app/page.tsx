@@ -1,5 +1,13 @@
 "use client"
+
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { XCircle, PlusCircle, Trash2, AlertCircle } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface Todo {
   id: number;
@@ -7,6 +15,11 @@ interface Todo {
   completed: boolean;
 }
 
+/**
+ * Renders the main Todo application interface, allowing users to view, add, complete, and delete tasks.
+ *
+ * Fetches todos from the server on mount, manages local state for todos, loading, and errors, and provides UI controls for CRUD operations. Displays loading and error states, and updates the UI in response to user actions and API responses.
+ */
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
@@ -99,77 +112,120 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-      <h1 className="text-2xl font-bold text-center text-gray-800">TODO App!</h1>
-      {error && (
-        <div className="mt-4 p-2 bg-red-100 text-red-700 rounded flex justify-between items-center">
-          {error}
-          <button
-            onClick={() => setError(null)}
-            className="text-red-700 font-bold"
-            aria-label="Dismiss error"
+    <div className="container mx-auto py-10 px-4 max-w-md">
+      <Card className="shadow-lg border-opacity-50">
+        <CardHeader className="pb-4 border-b">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">
+              My Tasks
+            </CardTitle>
+            <ThemeToggle />
+          </div>
+        </CardHeader>
+        
+        {error && (
+          <div className="px-6 pt-4">
+            <Alert variant="destructive" className="animate-in fade-in slide-in-from-top-5 duration-300">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription className="flex justify-between items-center">
+                <span>{error}</span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setError(null)}
+                  className="h-6 w-6 p-0 rounded-full"
+                >
+                  <XCircle className="h-4 w-4" />
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+        
+        <CardContent className="pt-6">
+          <form 
+            className="flex space-x-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              addTodo();
+            }}
           >
-            x
-          </button>
-        </div>
-      )}
-      <form 
-        className="flex mt-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          addTodo();
-        }}
-      >
-        <input
-          type="text"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          className="flex-1 border p-2 rounded-l text-gray-800"
-          placeholder="New todo..."
-        />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded-r">
-          Add
-        </button>
-      </form>
-      {isLoading ? (
-        <div className="mt-4 text-center text-gray-500">Loading todos...</div>
-      ) : (
-        <ul className="mt-4">
-          {todos.length === 0 && (
-            <li key={-1} className="p-2 text-center text-gray-500">No todos. Add one above!</li>
-          )}
-          {todos.map((todo) => (
-            <li
-              key={todo.id}
-              className="flex justify-between items-center p-2 border-b"
-            >
-              <span
-                className={`flex-1 cursor-pointer text-gray-500 ${
-                  todo.completed ? "line-through" : ""
-                }`}
-                onClick={() => toggleTodo(todo.id, todo.completed)}
-                role="checkbox"
-                aria-checked={todo.completed}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    toggleTodo(todo.id, todo.completed)
-                  }
-                }}
-              >
-                {todo.title}
-              </span>
-              <button
-                onClick={() => deleteTodo(todo.id)}
-                className="bg-red-500 text-white p-1 rounded"
-                aria-label={`Delete ${todo.title}`}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+            <Input
+              type="text"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="What needs to be done?"
+              className="flex-1"
+            />
+            <Button type="submit" className="shrink-0">
+              <PlusCircle className="mr-1 h-4 w-4" />
+              Add
+            </Button>
+          </form>
+          
+          <div className="mt-6 space-y-1">
+            {isLoading ? (
+              <div className="py-8 text-center text-muted-foreground animate-pulse">
+                Loading tasks...
+              </div>
+            ) : todos.length === 0 ? (
+              <div className="py-8 text-center text-muted-foreground">
+                No tasks yet. Add one above!
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {todos.map((todo) => (
+                  <div
+                    key={todo.id}
+                    className={`flex items-center justify-between p-3 rounded-md transition-all duration-200 ${
+                      todo.completed 
+                        ? "bg-muted/50" 
+                        : "bg-card hover:bg-accent/10"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Checkbox 
+                        checked={todo.completed}
+                        onCheckedChange={() => toggleTodo(todo.id, todo.completed)}
+                        id={`todo-${todo.id}`}
+                      />
+                      <label
+                        htmlFor={`todo-${todo.id}`}
+                        className={`text-sm cursor-pointer ${
+                          todo.completed 
+                            ? "text-muted-foreground line-through" 
+                            : "text-foreground"
+                        }`}
+                      >
+                        {todo.title}
+                      </label>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteTodo(todo.id)}
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Delete</span>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+        
+        <CardFooter className="flex justify-between border-t pt-4 text-xs text-muted-foreground">
+          <div>
+            {todos.length} {todos.length === 1 ? "task" : "tasks"}
+          </div>
+          <div>
+            {todos.filter(t => t.completed).length} completed
+          </div>
+        </CardFooter>
+      </Card>
     </div>
-  )
+  );
 }
