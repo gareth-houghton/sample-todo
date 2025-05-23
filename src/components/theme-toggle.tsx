@@ -11,6 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+/**
+ * Renders a dropdown menu for switching between light, dark, and system themes.
+ *
+ * Provides an accessible icon button that visually indicates the current theme and allows users to select a preferred theme from a dropdown list.
+ */
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 

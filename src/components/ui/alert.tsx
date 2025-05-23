@@ -19,6 +19,13 @@ const alertVariants = cva(
   }
 )
 
+/**
+ * Renders a styled alert container with support for visual variants.
+ *
+ * Applies accessible roles and data attributes, and merges variant-based and custom class names. Additional props are spread onto the root div.
+ *
+ * @param variant - Optional style variant for the alert appearance.
+ */
 function Alert({
   className,
   variant,
@@ -34,6 +41,11 @@ function Alert({
   )
 }
 
+/**
+ * Renders the title section of an alert with styling for prominence and single-line truncation.
+ *
+ * @param className - Additional class names to merge with the default styles.
+ */
 function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -47,6 +59,12 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Renders the description section of an alert with muted styling and relaxed line height.
+ *
+ * @remarks
+ * Intended to be used within an {@link Alert} component to provide additional context or details.
+ */
 function AlertDescription({
   className,
   ...props

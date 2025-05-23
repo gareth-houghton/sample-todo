@@ -2,6 +2,11 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Renders a styled container for card UI elements.
+ *
+ * Combines base card styles with any additional class names and spreads extra props onto the root div.
+ */
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -15,6 +20,12 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Renders the header section of a card with grid layout and spacing.
+ *
+ * Applies responsive grid styling and positions its children for use as the card's header area.
+ * Automatically adjusts grid columns if a card action element is present.
+ */
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -28,6 +39,11 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Renders the title section of a card with bold styling and no extra line spacing.
+ *
+ * Intended for displaying the main heading or title within a card layout.
+ */
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -38,6 +54,12 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Renders descriptive text within a card, styled with muted color and smaller font size.
+ *
+ * @remark
+ * Additional props are spread onto the underlying div element.
+ */
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -48,6 +70,11 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Renders a container for card action elements, positioned at the top-right of the card header grid.
+ *
+ * Use this component to place actions such as buttons or menus within a card layout.
+ */
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -61,6 +88,11 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Renders the main content area of a card with horizontal padding.
+ *
+ * Spreads additional props onto the underlying div and merges any provided className with default padding styles.
+ */
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -71,6 +103,11 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Renders the footer section of a card with horizontal layout and padding.
+ *
+ * Typically used for actions or metadata at the bottom of a card.
+ */
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

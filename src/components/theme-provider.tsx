@@ -24,6 +24,19 @@ const initialState: ThemeProviderState = {
 
 export const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
+/**
+ * Provides theme context to its children, managing and persisting the UI theme ("dark", "light", or "system") across the application.
+ *
+ * Applies the selected theme to the document root by updating CSS classes and persists the preference in localStorage. Supports automatic system theme detection if enabled.
+ *
+ * @param children - React nodes to receive the theme context.
+ * @param defaultTheme - The initial theme if no preference is stored.
+ * @param storageKey - The localStorage key used to persist the theme.
+ * @param enableSystem - Whether to allow automatic system theme detection.
+ *
+ * @remark
+ * The theme is only initialized from localStorage on the client side. If used in a server-rendered environment, the default theme is applied until hydration.
+ */
 export function ThemeProvider({
   children,
   defaultTheme = "system",

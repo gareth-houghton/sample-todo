@@ -18,6 +18,13 @@ export const metadata: Metadata = {
   description: "For demo purposes and testing new things",
 };
 
+/**
+ * Defines the root layout for the application, applying global fonts and theme context.
+ *
+ * Wraps all page content with font styles and a theme provider that enables system-based theme switching.
+ *
+ * @param children - The content to be rendered within the layout.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
