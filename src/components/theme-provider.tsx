@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useEffect, useState, ReactNode, createContext, useContext } from "react"
+import { useEffect, useState, ReactNode, createContext, useContext, useMemo } from "react"
 
 type Theme = "dark" | "light" | "system"
 
@@ -39,11 +39,13 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement
+    let systemThemeMediaQuery: MediaQueryList | undefined;
 
     root.classList.remove("light", "dark")
 
     if (theme === "system" && enableSystem) {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      systemThemeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const systemTheme = systemThemeMediaQuery.matches
         ? "dark"
         : "light"
       root.classList.add(systemTheme)
@@ -51,15 +53,24 @@ export function ThemeProvider({
     }
 
     root.classList.add(theme)
+
+    return () => {
+      if (systemThemeMediaQuery?.removeEventListener) {
+        systemThemeMediaQuery.removeEventListener("change", () => {});
+      }
+    }
   }, [theme, enableSystem])
 
-  const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
-    },
-  }
+  const value = useMemo(
+    () => ({
+      theme,
+      setTheme: (theme: Theme) => {
+        localStorage.setItem(storageKey, theme)
+        setTheme(theme)
+      },
+    }),
+    [theme, storageKey]
+  )
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
