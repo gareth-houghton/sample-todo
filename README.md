@@ -33,3 +33,14 @@ As the docker compose file uses a volume this will persist any data that you cre
 ```bash
 docker compose down -v
 ```
+
+## Database
+The app uses Drizzle as an ORM to connect to a PostgreSQL database. One of the benefits is that the source repository contains the database migrations, making DB creation really easy. 
+
+If a change is made to the database schema and you need to generate new migrations this can be done really easily using the `drizzle-kit` command below:
+
+```bash
+npx drizzle-kit generate
+```
+
+This will create the migration file in `/drizzle` which you can run however you like.
