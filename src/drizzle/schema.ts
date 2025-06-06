@@ -5,5 +5,5 @@ export const todos = pgTable("todos", {
   title: text("title").notNull(),
   completed: boolean("completed").default(false).notNull(),
   createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
-  lastUpdated: timestamp("last_updated", { precision: 3 }).defaultNow().notNull(),
+  lastUpdated: timestamp("last_updated", { precision: 3 }).defaultNow().notNull().$onUpdate(() => new Date()),
 });

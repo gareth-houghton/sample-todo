@@ -17,11 +17,13 @@ export async function POST(req: Request) {
   try {
     const { title } = await req.json();
 
+    console.log(title)
+
     if (!title || typeof title !== "string" || title.trim() === "") {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
-    await db.insert(todos).values({ title, completed: false });
+    await db.insert(todos).values({ title: title, completed: false, createdAt: new Date() });
     return NextResponse.json({ message: "Todo added successfully" });
   } catch (error) {
     console.error("Failed to add todo:", error);
