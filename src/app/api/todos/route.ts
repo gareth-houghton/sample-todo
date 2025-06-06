@@ -1,11 +1,15 @@
 import { db } from "@/drizzle/db";
 import { todos } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const allTodos = await db.select().from(todos)
+    const headersList = await headers();
+    const user = headersList.get("userId");
+
+    const allTodos = await db.select().from(todos).where(eq(todos.userId, user!))
     return NextResponse.json(allTodos);
   } catch (error) {
     console.log(error);
@@ -16,14 +20,18 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const { title } = await req.json();
-
-    console.log(title)
+    const headersList = await headers();
+    const user = headersList.get("userId");
 
     if (!title || typeof title !== "string" || title.trim() === "") {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
-    await db.insert(todos).values({ title: title, completed: false, createdAt: new Date() });
+    if(!user || typeof user !== "string" || user.trim() === "") {
+      return NextResponse.json({ error: "User is required" }, { status: 400 })
+    }
+
+    await db.insert(todos).values({ title: title, completed: false, createdAt: new Date(), userId: user! });
     return NextResponse.json({ message: "Todo added successfully" });
   } catch (error) {
     console.error("Failed to add todo:", error);

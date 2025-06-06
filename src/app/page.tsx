@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { XCircle, PlusCircle, Trash2, AlertCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Todo {
   id: number;
@@ -25,16 +26,21 @@ export default function Home() {
   const [newTodo, setNewTodo] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<string>("");
 
   useEffect(() => {
     async function fetchTodos() {
       setIsLoading(true);
       setError(null);
       try {
-        const res = await fetch("/api/todos");
+        const res = await fetch("/api/todos", {
+          headers: { "userId": user },
+        });
+
         if (!res.ok) {
           throw new Error(`Error: ${res.status}`);
         }
+
         const data = await res.json();
         setTodos(data);
       } catch (error) {
@@ -45,7 +51,7 @@ export default function Home() {
       }
     }
     fetchTodos();
-  }, []);
+  }, [user]);
 
   const addTodo = async () => {
     if(!newTodo) return;
@@ -54,14 +60,19 @@ export default function Home() {
       const res = await fetch("/api/todos", {
         method: "POST",
         body: JSON.stringify({ title: newTodo }),
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "userId": user,
+        },
       });
       
       if (!res.ok) {
         throw new Error(`Error: ${res.status}`);
       }
 
-      const todosRes = await fetch("/api/todos");
+      const todosRes = await fetch("/api/todos", {
+        headers: { "userId": user },
+      });
       const todosData = await todosRes.json();
       setTodos(todosData);
       setNewTodo("");
@@ -111,8 +122,21 @@ export default function Home() {
     }
   };
 
+  const handleUserContextChange = (newUser: string) => {
+    setUser(newUser);
+  };
+
   return (
     <div className="container mx-auto py-10 px-4 max-w-md">
+      <Select onValueChange={handleUserContextChange}>
+        <SelectTrigger className="w-2/3 mx-auto mb-5">
+          <SelectValue placeholder="Select a user" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="user1">User #1</SelectItem>
+          <SelectItem value="user2">User #2</SelectItem>
+        </SelectContent>
+      </Select>
       <Card className="shadow-lg border-opacity-50">
         <CardHeader className="pb-4 border-b">
           <div className="flex items-center justify-between">

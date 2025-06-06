@@ -1,0 +1,1 @@
+ALTER TABLE "todos" ADD COLUMN "user_id" varchar(256) DEFAULT 'none' NOT NULL;
