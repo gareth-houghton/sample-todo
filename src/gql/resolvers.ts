@@ -12,8 +12,9 @@ type Resolvers = InferResolvers<
 
 export const resolvers: Resolvers = {
   Query: {
-    getTodos: (_, __, ctx) => {
-      //return db.select().from(todos);
+    getTodos: async (parent, args, context, info) => {
+      const res = await db.select().from(todos).where(eq(todos.userId, args.userId));
+      return res;
     },
   },
 };
