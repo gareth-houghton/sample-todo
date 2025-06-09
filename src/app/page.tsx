@@ -17,9 +17,9 @@ interface Todo {
 }
 
 /**
- * Renders the main Todo application interface, allowing users to view, add, complete, and delete tasks.
+ * Displays the Todo application interface, enabling users to manage tasks within a selected user context.
  *
- * Fetches todos from the server on mount, manages local state for todos, loading, and errors, and provides UI controls for CRUD operations. Displays loading and error states, and updates the UI in response to user actions and API responses.
+ * Provides functionality to view, add, complete, and delete todos, with real-time updates based on user actions and server responses. Supports switching between different users, automatically fetching and displaying tasks for the selected user. Handles loading and error states to ensure a responsive user experience.
  */
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -29,6 +29,12 @@ export default function Home() {
   const [user, setUser] = useState<string>("");
 
   useEffect(() => {
+    /**
+     * Fetches the list of todos for the currently selected user and updates the state.
+     *
+     * @remark
+     * Sets loading and error states appropriately during the fetch operation.
+     */
     async function fetchTodos() {
       setIsLoading(true);
       setError(null);
