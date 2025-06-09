@@ -21,8 +21,8 @@ export const queryType = g.type("Query", {
 });
 
 function createDateType(name: string) {
-  return g.scalarType<Date, number>(name, {
-    serialize: (value) => value.getTime(),
+  return g.scalarType<Date, string>(name, {
+    serialize: (value) => value.toISOString(),
     parseValue: (value) => new Date(value),
   });
 }
