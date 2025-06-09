@@ -86,7 +86,7 @@ export default function Home() {
     try {
       const res = await fetch("/api/todos", {
         method: "PUT",
-        body: JSON.stringify({ id, completed: !completed }),
+        body: JSON.stringify({ id, completed: !completed, userId: user }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -107,7 +107,7 @@ export default function Home() {
     try {
       const res = await fetch("/api/todos", {
         method: "DELETE",
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id: id, userId: user }),
         headers: { "Content-Type": "application/json" },
       });
       

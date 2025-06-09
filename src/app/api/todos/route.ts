@@ -1,6 +1,11 @@
-import { db } from "@/drizzle/db";
-import { todos } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import {
+  CreateTodo,
+  DeleteTodo,
+  ExistingTodo,
+  GetAllTodosForUser,
+  UpdateTodo,
+} from "@/utils/db"
+import { NewTodo } from "@/utils/types";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -9,7 +14,15 @@ export async function GET() {
     const headersList = await headers();
     const user = headersList.get("userId");
 
-    const allTodos = await db.select().from(todos).where(eq(todos.userId, user!))
+    if (!user || user.trim() === "") {
+      return NextResponse.json([], { status: 200 });
+    }
+
+    if (typeof user !== "string") {
+      return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+    }
+
+    const allTodos = await GetAllTodosForUser(user);
     return NextResponse.json(allTodos);
   } catch (error) {
     console.log(error);
@@ -31,7 +44,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User is required" }, { status: 400 })
     }
 
-    await db.insert(todos).values({ title: title, completed: false, createdAt: new Date(), userId: user! });
+    const createTodo: NewTodo = {
+      title: title,
+      completed: false,
+      createdAt: new Date(),
+      userId: user,
+    }
+
+    await CreateTodo(createTodo);
     return NextResponse.json({ message: "Todo added successfully" });
   } catch (error) {
     console.error("Failed to add todo:", error);
@@ -41,18 +61,18 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { id, completed } = await req.json();
+    const { id, completed, userId } = await req.json();
 
     if (id === undefined || typeof completed !== "boolean") {
       return NextResponse.json({ error: "Valid id and completed status are required" }, { status: 400 });
     }
 
-    const existingTodo = await db.select().from(todos).where(eq(todos.id, id)).limit(1);
+    const existingTodo = await ExistingTodo(id, userId);
     if (existingTodo.length === 0) {
       return NextResponse.json({ error: "Todo not found" }, { status: 404 });
     }
 
-    await db.update(todos).set({ completed }).where(eq(todos.id, id));
+    await UpdateTodo(id, userId, completed);
     return NextResponse.json({ message: "Todo updated successfully" });
   } catch (error) {
     console.error("Failed to update todo:", error);
@@ -62,18 +82,18 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const { id } = await req.json();
+    const { id, userId } = await req.json();
 
     if (id === undefined) {
       return NextResponse.json({ error: "Valid id is required" }, { status: 400 });
     }
 
-    const existingTodo = await db.select().from(todos).where(eq(todos.id, id)).limit(1);
+    const existingTodo = await ExistingTodo(id, userId);
     if (existingTodo.length === 0) {
       return NextResponse.json({ error: "Todo not found" }, { status: 404 });
     }
 
-    await db.delete(todos).where(eq(todos.id, id));
+    await DeleteTodo(id, userId);
     return NextResponse.json({ message: "Todo successfully deleted" });
   } catch (error) {
     console.error("Failed to delete todo:", error);

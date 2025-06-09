@@ -1,9 +1,7 @@
 import { InferResolvers } from "garph";
 import { YogaInitialContext } from "graphql-yoga";
-import { eq } from "drizzle-orm";
 import { queryType } from "./schema";
-import { db } from "../drizzle/db";
-import { todos } from "../drizzle/schema";
+import { GetAllTodosForUser } from "@/utils/db";
 
 type Resolvers = InferResolvers<
   { Query: typeof queryType; },
@@ -13,8 +11,16 @@ type Resolvers = InferResolvers<
 export const resolvers: Resolvers = {
   Query: {
     getTodos: async (parent, args, context, info) => {
-      const res = await db.select().from(todos).where(eq(todos.userId, args.userId));
-      return res;
+      if (!args.userId || typeof args.userId !== 'string') {
+        throw new Error('Invalid userId provided in gql');
+      }
+      
+      try {
+        return await GetAllTodosForUser(args.userId);
+      } catch (error) {
+        console.error('Failed to fetch todos in gql:', error);
+        throw new Error('Failed to fetch todos gql');
+      }
     },
   },
 };
