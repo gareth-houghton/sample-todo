@@ -9,6 +9,14 @@ import { NewTodo } from "@/utils/types";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
+/**
+ * Handles GET requests to retrieve all todo items for a specific user.
+ *
+ * Extracts the user ID from the request headers and returns the user's todo list as JSON.
+ * If the user ID is missing or empty, returns an empty array with status 200.
+ * If the user ID is not a string, returns a 400 error.
+ * On unexpected errors, returns a 500 error with an error message.
+ */
 export async function GET() {
   try {
     const headersList = await headers();
@@ -30,6 +38,12 @@ export async function GET() {
   }
 }
 
+/**
+ * Handles HTTP POST requests to create a new todo item for a user.
+ *
+ * Expects a JSON body with a non-empty "title" field and a "userId" header identifying the user.
+ * Returns a success message upon creation, or an error message with appropriate status code if validation fails.
+ */
 export async function POST(req: Request) {
   try {
     const { title } = await req.json();
@@ -59,6 +73,12 @@ export async function POST(req: Request) {
   }
 }
 
+/**
+ * Handles HTTP PUT requests to update the completion status of a user's todo item.
+ *
+ * Expects a JSON body containing the todo's {@link id}, the new {@link completed} status, and the {@link userId}.
+ * Returns a success message if the update is successful, or an error message if validation fails or the todo does not exist.
+ */
 export async function PUT(req: Request) {
   try {
     const { id, completed, userId } = await req.json();
@@ -80,6 +100,11 @@ export async function PUT(req: Request) {
   }
 }
 
+/**
+ * Handles HTTP DELETE requests to remove a todo item for a specific user.
+ *
+ * Expects a JSON body containing the todo's {@link id} and the associated {@link userId}. Returns a success message if the todo is deleted, or an error if the todo does not exist or input is invalid.
+ */
 export async function DELETE(req: Request) {
   try {
     const { id, userId } = await req.json();
