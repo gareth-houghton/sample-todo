@@ -1,11 +1,10 @@
 import { db } from "@/drizzle/db";
 import { todos } from "@/drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import { NewTodo } from "./types";
+import { NewTodo, TodoRecord } from "./types";
 
-export async function GetAllTodosForUser(userId: string) {
-  return await 
-    db.select()
+export async function GetAllTodosForUser(userId: string): Promise<TodoRecord[]> {
+  return db.select()
     .from(todos)
     .where(eq(todos.userId, userId))
 }
@@ -21,9 +20,8 @@ export async function CreateTodo(todo: NewTodo) {
     });
 }
 
-export async function ExistingTodo(todoId: number, userId: string) {
-  return await 
-    db.select()
+export async function ExistingTodo(todoId: number, userId: string): Promise<TodoRecord[]> {
+  return db.select()
     .from(todos)
     .where(
       and(

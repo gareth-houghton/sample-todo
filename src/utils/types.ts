@@ -4,3 +4,12 @@ export type NewTodo = {
   createdAt: Date,
   userId: string
 };
+
+export type TodoRecord = {
+  id: number,
+  title: string,
+  completed: boolean,
+  createdAt: Date,
+  lastUpdated: Date,
+  userId: string
+}
