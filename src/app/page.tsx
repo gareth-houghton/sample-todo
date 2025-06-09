@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { XCircle, PlusCircle, Trash2, AlertCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Todo {
   id: number;
@@ -16,25 +17,36 @@ interface Todo {
 }
 
 /**
- * Renders the main Todo application interface, allowing users to view, add, complete, and delete tasks.
+ * Displays the Todo application interface, enabling users to manage tasks within a selected user context.
  *
- * Fetches todos from the server on mount, manages local state for todos, loading, and errors, and provides UI controls for CRUD operations. Displays loading and error states, and updates the UI in response to user actions and API responses.
+ * Provides functionality to view, add, complete, and delete todos, with real-time updates based on user actions and server responses. Supports switching between different users, automatically fetching and displaying tasks for the selected user. Handles loading and error states to ensure a responsive user experience.
  */
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<string>("");
 
   useEffect(() => {
+    /**
+     * Fetches the list of todos for the currently selected user and updates the state.
+     *
+     * @remark
+     * Sets loading and error states appropriately during the fetch operation.
+     */
     async function fetchTodos() {
       setIsLoading(true);
       setError(null);
       try {
-        const res = await fetch("/api/todos");
+        const res = await fetch("/api/todos", {
+          headers: { "userId": user },
+        });
+
         if (!res.ok) {
           throw new Error(`Error: ${res.status}`);
         }
+
         const data = await res.json();
         setTodos(data);
       } catch (error) {
@@ -45,7 +57,7 @@ export default function Home() {
       }
     }
     fetchTodos();
-  }, []);
+  }, [user]);
 
   const addTodo = async () => {
     if(!newTodo) return;
@@ -54,14 +66,19 @@ export default function Home() {
       const res = await fetch("/api/todos", {
         method: "POST",
         body: JSON.stringify({ title: newTodo }),
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "userId": user,
+        },
       });
       
       if (!res.ok) {
         throw new Error(`Error: ${res.status}`);
       }
 
-      const todosRes = await fetch("/api/todos");
+      const todosRes = await fetch("/api/todos", {
+        headers: { "userId": user },
+      });
       const todosData = await todosRes.json();
       setTodos(todosData);
       setNewTodo("");
@@ -75,7 +92,7 @@ export default function Home() {
     try {
       const res = await fetch("/api/todos", {
         method: "PUT",
-        body: JSON.stringify({ id, completed: !completed }),
+        body: JSON.stringify({ id, completed: !completed, userId: user }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -96,7 +113,7 @@ export default function Home() {
     try {
       const res = await fetch("/api/todos", {
         method: "DELETE",
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id: id, userId: user }),
         headers: { "Content-Type": "application/json" },
       });
       
@@ -111,8 +128,21 @@ export default function Home() {
     }
   };
 
+  const handleUserContextChange = (newUser: string) => {
+    setUser(newUser);
+  };
+
   return (
     <div className="container mx-auto py-10 px-4 max-w-md">
+      <Select onValueChange={handleUserContextChange}>
+        <SelectTrigger className="w-2/3 mx-auto mb-5">
+          <SelectValue placeholder="Select a user" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="user1">User #1</SelectItem>
+          <SelectItem value="user2">User #2</SelectItem>
+        </SelectContent>
+      </Select>
       <Card className="shadow-lg border-opacity-50">
         <CardHeader className="pb-4 border-b">
           <div className="flex items-center justify-between">
