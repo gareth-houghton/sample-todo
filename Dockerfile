@@ -35,11 +35,6 @@ RUN adduser --system -u 1001 nextjs
 
 RUN echo 'PGDB_URL="postgres://postgres:V3nd4V0@postgres:5432/tododb"' > .env
 
-# RUN addgroup nodejs
-# RUN adduser -SDH -G nodejs nextjs
-# RUN mkdir .next
-# RUN chown nextjs:nodejs .next
-
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
