@@ -7,4 +7,5 @@ const { handleRequest } = createYoga({
   fetchAPI: { Response },
 });
 
-export { handleRequest as GET, handleRequest as POST }
+export const GET = (req: Request) => handleRequest(req, {});
+export const POST = (req: Request) => handleRequest(req, {});

@@ -12,11 +12,24 @@ services:
       - POSTGRES_PASSWORD_FILE=/run/secrets/pg-password
     ports:
       - 5432:5432
+    networks:
+      - dbnet
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
+  frontend:
+    image: sample-todo:latest
+    ports:
+      - 3000:3000
+    networks:
+      - dbnet
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   pg-data:

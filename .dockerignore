@@ -1,0 +1,7 @@
+infra/
+node_modules/
+.next/
+out/
+README.md
+.git/
+.env*
