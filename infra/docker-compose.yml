@@ -30,6 +30,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+  extensions:
+    image: sample-todo-extensions:latest
+    ports:
+      - 8000:8080
+    networks:
+      - dbnet
 
 volumes:
   pg-data:
