@@ -13,11 +13,11 @@ export const TodoGQL = g.type("Todo", {
 });
 
 export const queryType = g.type("Query", {
-  getTodos: g.ref(() => TodoGQL).list()
+  todosByUserId: g.ref(() => TodoGQL).list()
     .args({
       userId: g.string().required()
     })
-    .description("Gets all the todos"),
+    .description("Gets all the todos for the provided user"),
 });
 
 /**

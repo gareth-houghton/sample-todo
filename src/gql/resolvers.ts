@@ -10,7 +10,7 @@ type Resolvers = InferResolvers<
 
 export const resolvers: Resolvers = {
   Query: {
-    getTodos: async (parent, args, context, info) => {
+    todosByUserId: async (_parent, args, _context, _info) => {
       if (!args.userId || typeof args.userId !== 'string') {
         throw new Error('Invalid userId provided in gql');
       }
