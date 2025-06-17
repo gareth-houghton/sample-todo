@@ -19,23 +19,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  frontend:
-    image: sample-todo:latest
-    ports:
-      - 3000:3000
-    networks:
-      - dbnet
-    environment:
-      - NODE_ENV=production
-    depends_on:
-      postgres:
-        condition: service_healthy
-  extensions:
-    image: sample-todo-extensions:latest
-    ports:
-      - 8000:8080
-    networks:
-      - dbnet
+  # frontend:
+  #   image: sample-todo:latest
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - dbnet
+  #   environment:
+  #     - NODE_ENV=production
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  # extensions:
+  #   image: sample-todo-extensions:latest
+  #   ports:
+  #     - 8000:8080
+  #   networks:
+  #     - dbnet
 
 volumes:
   pg-data:
