@@ -120,3 +120,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+.superset-container iframe {
+  width: 100%;
+  height: 1000px;
+}
